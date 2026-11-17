@@ -12,6 +12,9 @@ function parseCSV(t) {
   return rows;
 }
 
+// nettoie une variable : enlève espaces, retours à la ligne et guillemets en trop
+const lireVariable = (nom) => (process.env[nom] || "").trim().replace(/^["']|["']$/g, "").trim();
+
 async function lireOnglet(base, gid) {
   if (!gid) return null;
   const r = await fetch(`${base}?gid=${encodeURIComponent(gid)}&single=true&output=csv`);
@@ -20,16 +23,16 @@ async function lireOnglet(base, gid) {
 }
 
 export default async () => {
-  const pub = process.env.SHEET_PUB_URL || "";
+  const pub = lireVariable("SHEET_PUB_URL");
   const base = pub.replace(/\/pub(html)?(\?.*)?$/, "/pub");
   if (!/^https:\/\/docs\.google\.com\/spreadsheets\/d\/e\/[\w-]+\/pub$/.test(base)) {
     return Response.json({ erreur: "configuration manquante" }, { status: 500 });
   }
   try {
     const [carte, infos, menus] = await Promise.all([
-      lireOnglet(base, process.env.GID_CARTE),
-      lireOnglet(base, process.env.GID_INFOS),
-      lireOnglet(base, process.env.GID_MENUS).catch(() => null),
+      lireOnglet(base, lireVariable("GID_CARTE")),
+      lireOnglet(base, lireVariable("GID_INFOS")),
+      lireOnglet(base, lireVariable("GID_MENUS")).catch(() => null),
     ]);
     return Response.json({ carte: carte || [], infos: infos || [], menus }, {
       headers: {
