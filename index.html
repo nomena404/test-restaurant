@@ -69,6 +69,14 @@ section{padding:56px 0}
 .badge{font-size:12px;font-weight:800;border-radius:6px;padding:1px 8px;background:var(--bg);border:1px solid var(--line)}
 .badge.hot{background:var(--promo);color:#fff;border-color:var(--promo)}
 .list .dish{flex-direction:row}
+.menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.menu{background:var(--card);border:2px solid var(--primary);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.menu-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.menu h3{font-size:24px}
+.menu .price{font-size:22px;color:var(--primary)}
+.menu .quand{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--promo)}
+.menu ul{margin:0;padding-left:18px;color:var(--muted)}
+#menus{padding-bottom:0}
 .note{margin-top:16px;font-size:14px;color:var(--muted)}
 
 .resa{background:var(--primary);color:#fff;border-radius:22px;padding:32px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px}
@@ -104,7 +112,7 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
 <div class="promo" id="promo" hidden></div>
 <header><div class="wrap nav">
   <a class="logo" href="#" id="logo"></a>
-  <nav aria-label="Menu"><a href="#carte">La carte</a><a href="#reserver">Réserver</a><a href="#infos">Infos</a></nav>
+  <nav aria-label="Menu"><a href="#menus" id="nav-menus" hidden>Menus</a><a href="#carte">La carte</a><a href="#reserver">Réserver</a><a href="#infos">Infos</a></nav>
   <span class="sp"></span>
   <a class="btn" href="#reserver">Réserver</a>
 </div></header>
@@ -115,6 +123,11 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
   <p id="h-texte"></p>
   <div class="row"><a class="btn alt" href="#reserver">Réserver une table</a><a class="btn ghost" style="color:#fff;border-color:#fff" href="#carte">Voir la carte</a></div>
 </div></div>
+
+<section id="menus" hidden><div class="wrap">
+  <div class="sec-head"><div><h2>Nos menus</h2><p class="sub">Les formules du moment.</p></div></div>
+  <div class="menus" id="menus-list"></div>
+</div></section>
 
 <section id="carte"><div class="wrap">
   <div class="sec-head"><div><h2>La carte</h2><p class="sub" id="carte-sub"></p></div></div>
@@ -156,10 +169,8 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
    CONFIG ci-dessous et mettez les photos dans le dossier photos/.
    ===================================================================== */
 const CONFIG={
-  // Identifiant du Google Sheets du restaurant (la partie entre /d/ et /edit dans son lien).
-  // Le tableau doit être partagé en « Tous les utilisateurs disposant du lien : lecteur ».
-  // Laisser vide pour utiliser seulement les valeurs ci-dessous.
-  googleSheet:"1WMd2fxq4cAGeeE-63TURz_eU-1LF2q45BU9iXU89jPE",
+  // Les données (carte, infos, menus) sont lues par le serveur Netlify via /api/donnees.
+  // Les valeurs ci-dessous ne servent que si les données ne sont pas joignables.
 
   nom:"La Table d'Exemple",                 // nom du restaurant
   slogan:"Cuisine maison et produits du marché, au cœur de Toulon.",
@@ -191,6 +202,11 @@ const CONFIG={
       {nom:"Jus de fruits exotiques",desc:"Selon la saison",prix:4}
     ]
   },
+  // Menus / formules (laisser vide [] pour ne pas afficher la rubrique)
+  menus:[
+    {nom:"Menu du midi",contenu:["Entrée + plat ou plat + dessert","Selon l'ardoise du jour"],prix:15,quand:"Du lundi au vendredi midi"}
+  ],
+  rubriquesMasquees:[],   // ex. ["Desserts"] pour cacher une rubrique entière
   noteCarte:"Prix nets en euros, service compris. Liste des allergènes sur demande.",
 
   // Réservation : "whatsapp" ouvre WhatsApp avec le message déjà rempli ;
@@ -236,7 +252,11 @@ if(C.photoAccueil && !$("hero").querySelector("img")){ const im=new Image(); im.
 document.title=C.nom+" · "+C.categorie;
 $("carte-sub").textContent="Tout est fait maison."; $("carte-note").textContent=C.noteCarte;
 
-if(!C.carte[tab]) tab=Object.keys(C.carte)[0];
+const vis=Object.keys(C.carte).filter(k=>!C.rubriquesMasquees.some(m=>m.toLowerCase()===k.toLowerCase()));
+if(!vis.includes(tab)) tab=vis[0];
+$("menus").hidden=$("nav-menus").hidden=!C.menus.length;
+$("menus-list").innerHTML=C.menus.map(m=>'<article class="menu">'+(m.quand?'<span class="quand">'+esc(m.quand)+'</span>':'')+'<div class="menu-top"><h3>'+esc(m.nom)+'</h3><span class="price">'+euro(m.prix)+'</span></div>'+
+  (m.contenu.length?'<ul>'+m.contenu.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'')+'</article>').join("");
 renderCarte();
 const today=(new Date().getDay()+6)%7;
 $("hours").innerHTML=C.horaires.map((h,i)=>'<tr'+(i===today?' class="today"':'')+'><td>'+esc(h[0])+(i===today?' (aujourd\'hui)':'')+'</td><td>'+esc(h[1])+'</td></tr>').join("");
@@ -250,7 +270,8 @@ $("f-left").textContent=C.nom+" · "+C.adresse;
 }
 let tab=Object.keys(C.carte)[0];
 function renderCarte(){
-  $("tabs").innerHTML=Object.keys(C.carte).map(k=>'<button class="tab" type="button" role="tab" aria-selected="'+(k===tab)+'" data-tab="'+esc(k)+'">'+esc(k)+'</button>').join("");
+  if(!tab){ $("tabs").innerHTML=""; $("dishes").innerHTML=""; return; }
+  $("tabs").innerHTML=Object.keys(C.carte).filter(k=>!C.rubriquesMasquees.some(m=>m.toLowerCase()===k.toLowerCase())).map(k=>'<button class="tab" type="button" role="tab" aria-selected="'+(k===tab)+'" data-tab="'+esc(k)+'">'+esc(k)+'</button>').join("");
   $("dishes").innerHTML=C.carte[tab].map(d=>'<article class="dish"><div class="ph">'+(d.photo?'<img src="'+esc(d.photo)+'" alt="'+esc(d.nom)+'" loading="lazy" onerror="this.remove()">':'')+'</div>'+
     '<div class="dish-b"><div class="dish-top"><h3>'+esc(d.nom)+'</h3><span class="price">'+(d.ancienPrix?'<s>'+euro(d.ancienPrix)+'</s>':'')+euro(d.prix)+'</span></div>'+
     (d.desc?'<p class="desc">'+esc(d.desc)+'</p>':'')+
@@ -259,26 +280,16 @@ function renderCarte(){
 document.addEventListener("click",e=>{ const t=e.target.closest("[data-tab]"); if(t){ tab=t.dataset.tab; renderCarte(); } });
 renderAll();
 
-/* ---------- Lecture du Google Sheets ---------- */
-function parseCSV(t){
-  const rows=[]; let row=[], cur="", q=false;
-  for(let i=0;i<t.length;i++){ const c=t[i];
-    if(q){ if(c==='"'){ if(t[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
-    else if(c==='"') q=true; else if(c===','){ row.push(cur); cur=""; }
-    else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=""; } else if(c!=='\r') cur+=c; }
-  if(cur||row.length){ row.push(cur); rows.push(row); }
-  return rows;
-}
+/* ---------- Lecture des données (via le serveur du site) ---------- */
 const num=v=>{ const x=parseFloat(String(v||"").replace(/[^\d,.-]/g,"").replace(",",".")); return isNaN(x)?null:x; };
-async function lireOnglet(nom){
-  const url="https://docs.google.com/spreadsheets/d/"+C.googleSheet+"/gviz/tq?tqx=out:csv&headers=1&sheet="+encodeURIComponent(nom)+"&t="+Date.now();
-  const r=await fetch(url); if(!r.ok) throw new Error(nom);
-  return parseCSV(await r.text()).slice(1);
-}
 async function chargerSheet(){
-  if(!C.googleSheet) return;
   try{
-    const [carte,infos]=await Promise.all([lireOnglet("Carte"),lireOnglet("Infos")]);
+    const r=await fetch("/api/donnees"); if(!r.ok) return;
+    const {carte=[],infos=[],menus=null}=await r.json();
+    if(menus && menus.length && menus[0].length>=3){
+      C.menus=menus.map(r=>r.map(x=>(x||"").trim())).filter(r=>r[0] && !/^non$/i.test(r[4]||""))
+        .map(r=>({nom:r[0],contenu:r[1]?r[1].split(/\s*[\n;]\s*/).filter(Boolean):[],prix:num(r[2])||0,quand:r[3]||""}));
+    }
     const nc={};
     carte.forEach(r=>{ const [cat,nom,desc,prix,ancien,photo,badges,aff]=r.map(x=>(x||"").trim());
       if(!cat||!nom||/^non$/i.test(aff)) return;
@@ -293,6 +304,7 @@ async function chargerSheet(){
     if(g("adresse")) C.adresse=g("adresse"); if(g("accès")!==undefined) C.acces=g("accès");
     const jours=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
     if(jours.some(j=>g(j.toLowerCase()))) C.horaires=jours.map(j=>[j,g(j.toLowerCase())||"Fermé"]);
+    if(g("rubriques masquées")!==undefined) C.rubriquesMasquees=g("rubriques masquées").split(/\s*[,;]\s*/).filter(Boolean);
     ["instagram","facebook","tiktok"].forEach(k=>{ if(g(k)!==undefined) C.reseaux[k]=g(k); });
     renderAll();
   }catch(e){ /* le tableau n'est pas joignable : on garde les valeurs de CONFIG */ }
