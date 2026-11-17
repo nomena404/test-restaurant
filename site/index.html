@@ -169,7 +169,13 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
    CONFIG ci-dessous et mettez les photos dans le dossier photos/.
    ===================================================================== */
 const CONFIG={
-  // Les données (carte, infos, menus) sont lues par le serveur Netlify via /api/donnees.
+  // Les données (carte, infos, menus) sont lues par le serveur du site via /api/donnees.
+  // MODE TEST (GitHub Pages, sans serveur) : le site lit directement le tableau publié.
+  // Pour un vrai client, laisser lien vide : seul le serveur lit le tableau.
+  sourceTest:{
+    lien:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSwjGi14X_4-eHSai8e8ccHk6egxGxyUciMX_aKEwm54MulQQIDct60n0aGqnZGecLIu3UERmiIzWEr/pubhtml",
+    gidCarte:"1977904701", gidInfos:"1337847448", gidMenus:""
+  },
   // Les valeurs ci-dessous ne servent que si les données ne sont pas joignables.
 
   nom:"La Table d'Exemple",                 // nom du restaurant
@@ -281,11 +287,34 @@ document.addEventListener("click",e=>{ const t=e.target.closest("[data-tab]"); i
 renderAll();
 
 /* ---------- Lecture des données (via le serveur du site) ---------- */
+function parseCSV(t){
+  const rows=[]; let row=[], cur="", q=false;
+  for(let i=0;i<t.length;i++){ const c=t[i];
+    if(q){ if(c==='"'){ if(t[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
+    else if(c==='"') q=true; else if(c===','){ row.push(cur); cur=""; }
+    else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=""; } else if(c!=='\r') cur+=c; }
+  if(cur||row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+async function lireOngletPublie(base,gid){
+  if(!gid) return null;
+  const r=await fetch(base+"?gid="+encodeURIComponent(gid)+"&single=true&output=csv&t="+Date.now());
+  if(!r.ok) throw new Error("onglet");
+  return parseCSV(await r.text()).slice(1);
+}
+async function lireDonnees(){
+  try{ const r=await fetch("/api/donnees"); if(r.ok && (r.headers.get("content-type")||"").includes("json")) return await r.json(); }catch(_){}
+  const T=C.sourceTest||{};
+  if(!T.lien) return null;
+  const base=T.lien.trim().replace(/\/pub(html)?(\?.*)?$/,"/pub");
+  const [carte,infos,menus]=await Promise.all([lireOngletPublie(base,T.gidCarte),lireOngletPublie(base,T.gidInfos),lireOngletPublie(base,T.gidMenus).catch(()=>null)]);
+  return {carte:carte||[],infos:infos||[],menus};
+}
 const num=v=>{ const x=parseFloat(String(v||"").replace(/[^\d,.-]/g,"").replace(",",".")); return isNaN(x)?null:x; };
 async function chargerSheet(){
   try{
-    const r=await fetch("/api/donnees"); if(!r.ok) return;
-    const {carte=[],infos=[],menus=null}=await r.json();
+    const data=await lireDonnees(); if(!data) return;
+    const {carte=[],infos=[],menus=null}=data;
     if(menus && menus.length && menus[0].length>=3){
       C.menus=menus.map(r=>r.map(x=>(x||"").trim())).filter(r=>r[0] && !/^non$/i.test(r[4]||""))
         .map(r=>({nom:r[0],contenu:r[1]?r[1].split(/\s*[\n;]\s*/).filter(Boolean):[],prix:num(r[2])||0,quand:r[3]||""}));
