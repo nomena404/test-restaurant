@@ -5,115 +5,172 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Restaurant</title>
 <meta name="description" content="">
-<meta property="og:type" content="restaurant">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link id="fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap">
+<link id="fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&family=Caveat:wght@600;700&display=swap">
 <style>
 :root{
-  /* Les couleurs et polices sont remplacées par celles de CONFIG.style (plus bas). */
+  /* Couleurs et polices remplacées par CONFIG.style. Layout : bandeau, en-tête collant, accueil photo, carte + ardoise côte à côte, réservation, infos, réseaux. */
   --primary:#1F6B4A; --accent:#E9A21B; --promo:#C8432B;
   --bg:#FBF5EA; --card:#FFFFFF; --ink:#22231E; --muted:#6A6455; --line:#E6DCCB;
-  --font-titre:"Fraunces",Georgia,serif; --font-texte:"Nunito","Segoe UI",system-ui,sans-serif;
+  --ok:#1E8E4E; --ko:#C8432B; --chalk:#1F2A24;
+  --font-titre:"Fraunces",Georgia,serif; --font-texte:"Nunito","Segoe UI",system-ui,sans-serif; --font-craie:"Caveat","Comic Sans MS",cursive;
   color-scheme:light;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-texte);font-size:16px;line-height:1.55}
 h1,h2,h3{font-family:var(--font-titre);line-height:1.08;margin:0;text-wrap:balance}
 p{margin:0}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-.btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:0;border-radius:999px;padding:12px 22px;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
+.wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--primary);color:#fff;border:0;border-radius:999px;padding:12px 22px;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
 .btn.alt{background:var(--accent);color:var(--ink)}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost{background:transparent;color:#fff;border:2px solid #fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 .promo{background:var(--promo);color:#fff;text-align:center;font-weight:800;padding:9px 16px;font-size:15px}
+.demo{background:#FFF0C2;color:#6A4B00;text-align:center;font-size:13.5px;font-weight:700;padding:6px 12px}
 header{position:sticky;top:0;z-index:5;background:rgba(251,245,234,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.nav{display:flex;align-items:center;gap:20px;padding:12px 0;flex-wrap:wrap}
-.logo{font-family:var(--font-titre);font-size:27px;font-weight:700;color:var(--primary);text-decoration:none}
+.nav{display:flex;align-items:center;gap:18px;padding:11px 0;flex-wrap:wrap}
+.logo{font-family:var(--font-titre);font-size:26px;font-weight:700;color:var(--primary);text-decoration:none}
 .nav nav{display:flex;gap:18px;font-weight:700;font-size:15px}
 .nav nav a{text-decoration:none}
 .nav .sp{flex:1}
+.status{display:inline-flex;align-items:center;gap:7px;font-weight:800;font-size:14px;padding:5px 12px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.status i{width:9px;height:9px;border-radius:50%;background:var(--muted)}
+.status.open i{background:var(--ok)} .status.open{color:var(--ok)}
+.status.closed i{background:var(--ko)} .status.closed{color:var(--ko)}
+.closure{background:var(--ko);color:#fff;text-align:center;font-weight:800;padding:12px 16px;font-size:16px}
 
-.hero{position:relative;min-height:min(78vh,620px);display:grid;align-items:end;overflow:hidden;background:linear-gradient(120deg,var(--primary),var(--accent))}
+.hero{position:relative;min-height:min(70vh,560px);display:grid;align-items:end;overflow:hidden;background:linear-gradient(120deg,var(--primary),var(--accent))}
 .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.55))}
-.hero-in{position:relative;z-index:1;color:#fff;padding:40px 0 48px}
-.hero .tag{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px;opacity:.95}
-.hero h1{font-size:clamp(36px,6vw,64px);max-width:720px;margin:10px 0 12px}
-.hero p{max-width:560px;font-size:18px;opacity:.95}
-.hero .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 25%,rgba(0,0,0,.62))}
+.hero-in{position:relative;z-index:1;color:#fff;padding:40px 20px 46px}
+.hero .tag{font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+.hero h1{font-size:clamp(36px,6vw,62px);max-width:720px;margin:10px 0 12px}
+.hero p{max-width:560px;font-size:18px}
+.hero .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;align-items:center}
+.hero .status{background:rgba(255,255,255,.95)}
 
-section{padding:56px 0}
-.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-.sec-head h2{font-size:clamp(30px,4vw,42px)}
+section{padding:54px 0}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.sec-head h2{font-size:clamp(30px,4vw,40px)}
 .sub{color:var(--muted)}
 
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.carte-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .tab{background:transparent;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;font:inherit;font-weight:800;cursor:pointer;color:var(--ink)}
 .tab[aria-selected="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
-.dishes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
-.dish{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.dish .ph{aspect-ratio:4/3;background:linear-gradient(135deg,var(--primary),var(--accent));position:relative}
-.dish .ph img{width:100%;height:100%;object-fit:cover;display:block}
-.dish-b{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
+.dishes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.dish{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;text-align:left;font:inherit;color:inherit;padding:0;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.dish:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.ph{aspect-ratio:4/3;background:linear-gradient(135deg,var(--primary),var(--accent));position:relative;width:100%}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.dish-b{padding:14px 16px 16px;display:flex;flex-direction:column;gap:4px;flex:1;width:100%}
 .dish-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.dish h3{font-size:21px}
+.dish h3{font-size:20px}
 .price{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
 .price s{color:var(--muted);font-weight:600;margin-right:6px}
 .desc{color:var(--muted);font-size:14.5px}
 .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .badge{font-size:12px;font-weight:800;border-radius:6px;padding:1px 8px;background:var(--bg);border:1px solid var(--line)}
 .badge.hot{background:var(--promo);color:#fff;border-color:var(--promo)}
-.list .dish{flex-direction:row}
-.menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-.menu{background:var(--card);border:2px solid var(--primary);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
-.menu-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.menu h3{font-size:24px}
-.menu .price{font-size:22px;color:var(--primary)}
-.menu .quand{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--promo)}
-.menu ul{margin:0;padding-left:18px;color:var(--muted)}
-#menus{padding-bottom:0}
-.note{margin-top:16px;font-size:14px;color:var(--muted)}
+.more{margin-top:auto;padding-top:8px;font-size:13px;font-weight:800;color:var(--primary)}
 
-.resa{background:var(--primary);color:#fff;border-radius:22px;padding:32px;display:grid;grid-template-columns:1fr 1.2fr;gap:28px}
+.ardoise{position:sticky;top:80px;background:var(--chalk);color:#F4F1E6;border-radius:14px;padding:22px 22px 18px;border:10px solid #8A5A35;box-shadow:inset 0 0 40px rgba(0,0,0,.35)}
+.ardoise h2{font-family:var(--font-craie);font-size:36px;font-weight:700;margin-bottom:8px;color:#fff}
+.ardoise .date{font-family:var(--font-craie);font-size:20px;opacity:.85;margin-bottom:10px}
+.ard-item{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.25)}
+.ard-item:last-child{border-bottom:0}
+.ard-n{font-family:var(--font-craie);font-size:26px;line-height:1.05}
+.ard-d{font-size:13.5px;opacity:.8}
+.ard-p{font-family:var(--font-craie);font-size:26px;white-space:nowrap}
+
+.menus{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-bottom:34px}
+.menu{background:var(--card);border:2px solid var(--primary);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.menu-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.menu h3{font-size:23px}
+.menu .price{font-size:22px;color:var(--primary)}
+.menu .quand{font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--promo)}
+.menu ul{margin:0;padding-left:18px;color:var(--muted)}
+
+.resa{background:var(--primary);color:#fff;border-radius:22px;padding:32px;display:grid;grid-template-columns:1fr 1.4fr;gap:30px}
 .resa h2{font-size:36px;margin-bottom:8px}
-.resa .sub{color:rgba(255,255,255,.85)}
+.resa .sub{color:rgba(255,255,255,.88)}
 .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.form label{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
+.form label,.form .lbl{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
 .form input,.form select,.form textarea{width:100%;border:0;border-radius:10px;padding:11px 12px;font:inherit;color:var(--ink);background:#fff}
 .form .full{grid-column:1/-1}
-.form .btn{background:var(--accent);color:var(--ink);justify-content:center}
+.slots{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;align-items:center}
+.slot{border:2px solid rgba(255,255,255,.6);background:transparent;color:#fff;border-radius:10px;padding:8px 12px;font:inherit;font-weight:800;cursor:pointer;font-variant-numeric:tabular-nums}
+.slot[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.slot-msg{font-weight:800;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.12)}
+.slot-msg.ko{background:#fff;color:var(--ko)}
+.form .btn{background:var(--accent);color:var(--ink)}
 .msg{grid-column:1/-1;font-weight:700;min-height:1.4em}
+.msg.ok{background:#fff;color:var(--ok);padding:12px;border-radius:10px}
+.msg.ko{background:#fff;color:var(--ko);padding:12px;border-radius:10px}
+.hp{position:absolute;left:-9999px}
 
 .infos{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
 .card h3{font-size:24px;margin-bottom:10px}
 .hours{width:100%;border-collapse:collapse}
-.hours td{padding:7px 0;border-bottom:1px dotted var(--line)}
+.hours td{padding:7px 0;border-bottom:1px dotted var(--line);vertical-align:top}
 .hours td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 .hours tr.today td{font-weight:800;color:var(--primary)}
+.hours .ferme{color:var(--ko)}
 .links{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.exc{margin-top:12px;font-size:14px;color:var(--ko);font-weight:700}
+
+.social{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.social a{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:10px 18px;font-weight:800;text-decoration:none}
+.social a:hover{border-color:var(--primary)}
+.posts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.post{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.post iframe{width:100%;border:0;display:block;height:600px}
+.post a{display:block;padding:18px;font-weight:800}
+
+dialog{border:0;border-radius:20px;padding:0;max-width:min(560px,calc(100% - 24px));width:100%;max-height:calc(100% - 24px);overflow:auto;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(20,18,12,.55)}
+.dlg-ph{aspect-ratio:16/10;background:linear-gradient(135deg,var(--primary),var(--accent))}
+.dlg-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.dlg-b{padding:22px;display:flex;flex-direction:column;gap:12px}
+.dlg-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.dlg-b h3{font-size:28px}
+.dlg-b .price{font-size:22px;color:var(--primary)}
+.allerg{display:flex;flex-wrap:wrap;gap:6px}
+.allerg span{background:#FCE8E3;color:#8A2E1C;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:800}
+.dlg-close{position:sticky;top:10px;float:right;margin:10px 10px -50px 0;width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.95);font-size:22px;cursor:pointer;z-index:1}
+.small{font-size:13.5px;color:var(--muted)}
 footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:14px}
 footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
 
-@media (max-width:760px){
-  .nav nav{display:none}
+@media (max-width:860px){
+  .carte-grid{grid-template-columns:1fr}
+  .ardoise{position:static;order:-1}
   .resa{grid-template-columns:1fr;padding:24px}
+}
+@media (max-width:640px){
+  .nav nav{display:none}
   .form{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
+<div class="demo" id="demo" hidden>Données de démonstration : reliez le site à votre Google Sheets (CONFIG.api) pour afficher les vôtres.</div>
+<div class="closure" id="closure" hidden></div>
 <div class="promo" id="promo" hidden></div>
 <header><div class="wrap nav">
   <a class="logo" href="#" id="logo"></a>
-  <nav aria-label="Menu"><a href="#menus" id="nav-menus" hidden>Menus</a><a href="#carte">La carte</a><a href="#reserver">Réserver</a><a href="#infos">Infos</a></nav>
+  <nav aria-label="Menu"><a href="#carte">La carte</a><a href="#reserver">Réserver</a><a href="#infos">Infos</a><a href="#reseaux" id="nav-res" hidden>Vidéos</a></nav>
   <span class="sp"></span>
+  <span class="status" id="status-top"><i></i><span>…</span></span>
   <a class="btn" href="#reserver">Réserver</a>
 </div></header>
 
@@ -121,32 +178,38 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
   <div class="tag" id="h-tag"></div>
   <h1 id="h-titre"></h1>
   <p id="h-texte"></p>
-  <div class="row"><a class="btn alt" href="#reserver">Réserver une table</a><a class="btn ghost" style="color:#fff;border-color:#fff" href="#carte">Voir la carte</a></div>
+  <div class="row"><a class="btn alt" href="#reserver">Réserver une table</a><a class="btn ghost" href="#carte">Voir la carte</a><span class="status" id="status-hero"><i></i><span>…</span></span></div>
 </div></div>
 
-<section id="menus" hidden><div class="wrap">
-  <div class="sec-head"><div><h2>Nos menus</h2><p class="sub">Les formules du moment.</p></div></div>
-  <div class="menus" id="menus-list"></div>
-</div></section>
-
 <section id="carte"><div class="wrap">
-  <div class="sec-head"><div><h2>La carte</h2><p class="sub" id="carte-sub"></p></div></div>
-  <div class="tabs" role="tablist" id="tabs"></div>
-  <div class="dishes" id="dishes"></div>
-  <p class="note" id="carte-note"></p>
+  <div class="menus" id="menus" hidden></div>
+  <div class="carte-grid">
+    <div>
+      <div class="sec-head"><div><h2>La carte</h2><p class="sub">Cliquez sur un plat pour voir le détail et les allergènes.</p></div></div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="dishes" id="dishes"><p class="sub">Chargement de la carte…</p></div>
+    </div>
+    <aside class="ardoise" id="ardoise" hidden aria-labelledby="ard-titre">
+      <h2 id="ard-titre">L'ardoise du jour</h2>
+      <div class="date" id="ard-date"></div>
+      <div id="ard-list"></div>
+    </aside>
+  </div>
 </div></section>
 
 <section id="reserver"><div class="wrap">
   <div class="resa">
-    <div><h2>Réserver une table</h2><p class="sub" id="resa-sub"></p><p class="sub" style="margin-top:14px" id="resa-tel"></p></div>
+    <div><h2>Réserver une table</h2><p class="sub" id="resa-sub">Choisissez une date, puis un créneau. Nous vous confirmons rapidement.</p><p class="sub" style="margin-top:14px" id="resa-tel"></p></div>
     <form class="form" id="form" novalidate>
+      <div><label for="f-date">Date</label><input id="f-date" type="date" required></div>
+      <div><label for="f-pers">Personnes</label><select id="f-pers"></select></div>
+      <div class="full"><span class="lbl" id="slots-lbl">Créneau</span><div class="slots" id="slots" role="group" aria-labelledby="slots-lbl"><span class="slot-msg">Choisissez d'abord une date.</span></div></div>
       <div><label for="f-nom">Nom</label><input id="f-nom" required autocomplete="name"></div>
       <div><label for="f-tel">Téléphone</label><input id="f-tel" type="tel" required autocomplete="tel"></div>
-      <div><label for="f-date">Date</label><input id="f-date" type="date" required></div>
-      <div><label for="f-heure">Heure</label><input id="f-heure" type="time" required step="900"></div>
-      <div><label for="f-pers">Personnes</label><input id="f-pers" type="number" min="1" max="100" value="2" required></div>
+      <div><label for="f-email">E-mail (facultatif)</label><input id="f-email" type="email" autocomplete="email"></div>
       <div><label for="f-occ">Occasion</label><select id="f-occ"><option>Repas</option><option>Anniversaire</option><option>Groupe / afterwork</option><option>Repas d'affaires</option></select></div>
       <div class="full"><label for="f-msg">Message (allergies, demande…)</label><textarea id="f-msg" rows="2"></textarea></div>
+      <input class="hp" id="f-site" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button class="btn full" type="submit" id="f-btn">Envoyer ma demande</button>
       <p class="msg" id="f-out" role="status"></p>
     </form>
@@ -155,213 +218,239 @@ footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
 
 <section id="infos"><div class="wrap">
   <div class="infos">
-    <div class="card"><h3>Horaires</h3><table class="hours"><tbody id="hours"></tbody></table></div>
+    <div class="card"><h3>Horaires</h3><table class="hours"><tbody id="hours"></tbody></table><p class="exc" id="exc"></p></div>
     <div class="card"><h3>Nous trouver</h3><p id="adresse"></p><p class="sub" style="margin-top:6px" id="acces"></p><div class="links" id="links"></div></div>
   </div>
 </div></section>
 
-<footer><div class="wrap"><span id="f-left"></span><span>Site réalisé par FoodLab · @foodlab.var</span></div></footer>
+<section id="reseaux" hidden><div class="wrap">
+  <div class="sec-head"><div><h2>Suivez-nous</h2><p class="sub">Nos dernières vidéos et publications.</p></div></div>
+  <div class="social" id="social"></div>
+  <div class="posts" id="posts"></div>
+</div></section>
+
+<footer><div class="wrap"><span id="f-left"></span><span>Site réalisé par FoodLab</span></div><div class="wrap small" style="margin-top:8px" id="credits"></div></footer>
+
+<dialog id="dlg" aria-labelledby="dlg-nom"><button class="dlg-close" type="button" id="dlg-x" aria-label="Fermer">×</button><div id="dlg-c"></div></dialog>
 
 <script>
 /* =====================================================================
-   MODÈLE DE SITE FOODLAB
-   Pour chaque restaurant : dupliquez le dossier, modifiez seulement
-   CONFIG ci-dessous et mettez les photos dans le dossier photos/.
+   SITE RESTAURANT FOODLAB (v2)
+   Tout le contenu vient du Google Sheets du restaurant.
+   Seule ligne à remplir : api = le lien « Application Web » du tableau.
    ===================================================================== */
 const CONFIG={
-  // Les données (carte, infos, menus) sont lues par le serveur du site via /api/donnees.
-  // MODE TEST (GitHub Pages, sans serveur) : le site lit directement le tableau publié.
-  // Pour un vrai client, laisser lien vide : seul le serveur lit le tableau.
-  sourceTest:{
-    lien:"https://docs.google.com/spreadsheets/d/e/2PACX-1vSwjGi14X_4-eHSai8e8ccHk6egxGxyUciMX_aKEwm54MulQQIDct60n0aGqnZGecLIu3UERmiIzWEr/pubhtml",
-    gidCarte:"1977904701", gidInfos:"1337847448", gidMenus:""
-  },
-  // Les valeurs ci-dessous ne servent que si les données ne sont pas joignables.
-
-  nom:"La Table d'Exemple",                 // nom du restaurant
-  slogan:"Cuisine maison et produits du marché, au cœur de Toulon.",
-  categorie:"Cuisine maison · Toulon",
-  description:"Restaurant à Toulon : cuisine maison, carte qui change chaque semaine, réservation en ligne.",
-  photoAccueil:"photos/accueil.jpg",
-
-  style:{ // couleurs et polices choisies avec le restaurant
-    principale:"#1F6B4A", accent:"#E9A21B", promo:"#C8432B", fond:"#FBF5EA",
-    policeTitre:"Fraunces", policeTexte:"Nunito"
-  },
-
-  promo:{ active:true, texte:"Ce mois-ci : formule du midi plat + dessert à 15 €" },
-
-  carte:{
-    "Entrées":[
-      {nom:"Samoussas maison",desc:"Légumes ou viande, croustillants",prix:6,photo:"photos/samoussas.jpg",badges:["Fait maison"]},
-      {nom:"Achards de légumes",desc:"Légumes croquants au curcuma",prix:5,photo:"photos/achards.jpg",badges:["Végétarien"]}
-    ],
-    "Plats":[
-      {nom:"Rougail saucisses",desc:"Mijoté à la tomate, servi avec riz",prix:16,photo:"photos/rougail.jpg",badges:["Le plus commandé"],chaud:true},
-      {nom:"Mixao aux légumes",desc:"Nouilles sautées",prix:14,ancienPrix:16,photo:"photos/mixao.jpg",badges:["Promo"]}
-    ],
-    "Desserts":[
-      {nom:"Gâteau coco",desc:"Moelleux, à la noix de coco",prix:6,photo:"photos/coco.jpg"}
-    ],
-    "Boissons":[
-      {nom:"Rhum arrangé maison",desc:"Plusieurs parfums",prix:5,photo:"photos/rhum.jpg"},
-      {nom:"Jus de fruits exotiques",desc:"Selon la saison",prix:4}
-    ]
-  },
-  // Menus / formules (laisser vide [] pour ne pas afficher la rubrique)
-  menus:[
-    {nom:"Menu du midi",contenu:["Entrée + plat ou plat + dessert","Selon l'ardoise du jour"],prix:15,quand:"Du lundi au vendredi midi"}
-  ],
-  rubriquesMasquees:[],   // ex. ["Desserts"] pour cacher une rubrique entière
-  noteCarte:"Prix nets en euros, service compris. Liste des allergènes sur demande.",
-
-  // Réservation : "whatsapp" ouvre WhatsApp avec le message déjà rempli ;
-  // "formulaire" envoie à un service de formulaire (Formspree, Tally…) dont on colle l'adresse.
-  reservation:{ mode:"whatsapp", whatsapp:"33600000000", adresseFormulaire:"",
-    texte:"Remplissez le formulaire : la demande nous arrive directement et nous vous confirmons rapidement." },
-
-  telephone:"04 00 00 00 00",
-  adresse:"1 rue d'Exemple, 83000 Toulon",
-  acces:"À deux pas des Halles. Terrasse aux beaux jours.",
-  horaires:[ // de lundi à dimanche
-    ["Lundi","11h – 15h"],["Mardi","Fermé"],["Mercredi","Fermé"],["Jeudi","11h – 23h"],
-    ["Vendredi","11h – 23h"],["Samedi","11h – 23h"],["Dimanche","11h – 15h"]
-  ],
-  reseaux:{ instagram:"", facebook:"", tiktok:"" } // ex. "https://instagram.com/compte"
+  api:"",
+  style:{ principale:"#1F6B4A", accent:"#E9A21B", promo:"#C8432B", fond:"#FBF5EA", policeTitre:"Fraunces", policeTexte:"Nunito" }
 };
+const DEMO={"infos": [["Nom", "La Table d'Exemple"], ["Slogan", "Cuisine créole maison, au cœur de Toulon."], ["Catégorie", "Cuisine créole · Toulon"], ["Photo d'accueil", "https://commons.wikimedia.org/wiki/Special:FilePath/Rougail_Saucisse_04-07-07.jpg?width=1200"], ["Promo active", "oui"], ["Texte de la promo", "Cette semaine : formule du midi plat + dessert à 15 €"], ["Téléphone", "04 00 00 00 00"], ["E-mail", "contact@exemple.fr"], ["Adresse", "1 rue d'Exemple, 83000 Toulon"], ["Accès", "À deux pas des Halles. Terrasse aux beaux jours."], ["Instagram", "https://www.instagram.com/foodlab.var/"], ["Facebook", ""], ["TikTok", "https://www.tiktok.com/@foodlab.var"], ["Titre de l'ardoise", "L'ardoise du jour"], ["Réservations actives", "oui"], ["Personnes max par réservation", "10"], ["Délai minimum (heures)", "2"], ["Jours de réservation à l'avance", "60"], ["E-mail pour les réservations", ""], ["Message après réservation", "Merci ! Votre demande est bien reçue, nous vous confirmons rapidement par téléphone."], ["Crédits photos", "Photos d'illustration : Wikimedia Commons (Benoît Prieur, flo77220, Mj971 et autres)."]], "horaires": [["Lundi", "oui", "11:00-15:00", "", "12:00, 12:30, 13:00, 13:30"], ["Mardi", "non", "", "", ""], ["Mercredi", "non", "", "", ""], ["Jeudi", "oui", "11:00-15:00", "19:00-23:00", "12:00, 12:30, 13:00, 13:30, 19:00, 19:30, 20:00, 20:30, 21:00"], ["Vendredi", "oui", "11:00-15:00", "19:00-23:00", "12:00, 12:30, 13:00, 13:30, 19:00, 19:30, 20:00, 20:30, 21:00, 21:30"], ["Samedi", "oui", "11:00-15:00", "19:00-23:00", "12:00, 12:30, 13:00, 13:30, 19:00, 19:30, 20:00, 20:30, 21:00, 21:30"], ["Dimanche", "oui", "11:00-15:00", "", "12:00, 12:30, 13:00, 13:30"]], "fermetures": [["2026-12-25", "Noël"], ["2027-01-01", "Jour de l'an"]], "carte": [["Entrées", "Samoussas maison", "Légumes ou viande, croustillants", "6 €", "", "https://commons.wikimedia.org/wiki/Special:FilePath/Samosa_1.jpg?width=1200", "Fait maison", "Gluten", "Trois samoussas frits minute, servis avec une sauce pimentée maison. Version végétarienne sur demande.", "oui"], ["Entrées", "Achards de légumes", "Légumes croquants au curcuma", "5 €", "", "https://commons.wikimedia.org/wiki/Special:FilePath/Achards.jpg?width=1200", "Végétarien", "Moutarde", "Chou, carottes et haricots marinés au curcuma et au gingembre. Servi frais.", "oui"], ["Plats", "Rougail saucisses", "Mijoté à la tomate, servi avec riz", "16 €", "", "https://commons.wikimedia.org/wiki/Special:FilePath/Rougail_saucisse_et_riz_zambrocal.jpg?width=1200", "Le plus commandé", "Céleri, Sulfites", "Saucisses fumées mijotées avec tomates, oignons, gingembre et piment doux. Riz blanc et grains (lentilles ou haricots rouges).", "oui"], ["Plats", "Mixao aux légumes", "Nouilles sautées", "14 €", "16 €", "https://commons.wikimedia.org/wiki/Special:FilePath/Min_sao_avec_œuf_sur_plat.jpg?width=1200", "Promo", "Gluten, Soja, Œufs", "Nouilles sautées au wok avec légumes de saison, sauce soja et œuf au plat. Version au poulet possible.", "oui"], ["Desserts", "Koba", "Gâteau malgache cacahuète et banane", "6 €", "", "https://commons.wikimedia.org/wiki/Special:FilePath/Koba_1.jpg?width=1200", "Spécialité", "Arachides", "Pâte de riz, cacahuètes, banane et sucre de canne, cuite longuement dans une feuille de bananier.", "oui"], ["Boissons", "Rhum arrangé maison", "Plusieurs parfums selon l'humeur du chef", "5 €", "", "https://commons.wikimedia.org/wiki/Special:FilePath/Rhum_arrangé_001.jpg?width=1200", "", "", "Vanille, letchi, gingembre… Demandez les parfums du moment. L'abus d'alcool est dangereux pour la santé.", "oui"], ["Boissons", "Jus de fruits exotiques", "Selon la saison", "4 €", "", "", "Sans alcool", "", "Mangue, passion ou goyave, selon les arrivages.", "oui"]], "ardoise": [["Cari de cabri", "Le plat du jour, mijoté depuis ce matin", "17 €", "oui"], ["Bouchons vapeur", "Par 6, avec sauce soja pimentée", "8 €", "oui"], ["Flan coco", "Fait maison", "5 €", "oui"]], "menus": [["Formule du midi", "Entrée + plat ou plat + dessert; Selon l'ardoise", "15 €", "Midi en semaine", "oui"], ["Menu découverte", "Samoussas; Rougail ou cari du jour; Koba; Rhum arrangé", "29 €", "Tous les services", "oui"]], "reseaux": []};
 
-/* ---------- Le reste n'a pas besoin d'être modifié ---------- */
+/* ---------- Outils ---------- */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const C=CONFIG, euro=n=>(Number.isInteger(n)?n:n.toFixed(2).replace(".",","))+" €";
-
-// Style
-const st=document.documentElement.style;
-st.setProperty("--primary",C.style.principale); st.setProperty("--accent",C.style.accent);
-st.setProperty("--promo",C.style.promo); st.setProperty("--bg",C.style.fond);
-st.setProperty("--font-titre",'"'+C.style.policeTitre+'",Georgia,serif');
-st.setProperty("--font-texte",'"'+C.style.policeTexte+'","Segoe UI",system-ui,sans-serif');
-$("fonts").href="https://fonts.googleapis.com/css2?family="+encodeURIComponent(C.style.policeTitre)+":wght@600;700&family="+encodeURIComponent(C.style.policeTexte)+":wght@400;600;700;800&display=swap";
-
-// Référencement
-document.title=C.nom+" · "+C.categorie;
-document.querySelector('meta[name="description"]').content=C.description;
-const ld={"@context":"https://schema.org","@type":"Restaurant",name:C.nom,description:C.description,telephone:C.telephone,address:C.adresse,servesCuisine:C.categorie,url:location.href};
-const s=document.createElement("script"); s.type="application/ld+json"; s.textContent=JSON.stringify(ld); document.head.appendChild(s);
-
-// Contenu
-function renderAll(){
-$("promo").hidden=!C.promo.active;
-if(C.promo.active){ $("promo").hidden=false; $("promo").textContent=C.promo.texte; }
-$("logo").textContent=C.nom; $("h-tag").textContent=C.categorie; $("h-titre").textContent=C.nom; $("h-texte").textContent=C.slogan;
-if(C.photoAccueil && !$("hero").querySelector("img")){ const im=new Image(); im.alt=""; im.src=C.photoAccueil; im.onerror=()=>im.remove(); $("hero").prepend(im); }
-document.title=C.nom+" · "+C.categorie;
-$("carte-sub").textContent="Tout est fait maison."; $("carte-note").textContent=C.noteCarte;
-
-const vis=Object.keys(C.carte).filter(k=>!C.rubriquesMasquees.some(m=>m.toLowerCase()===k.toLowerCase()));
-if(!vis.includes(tab)) tab=vis[0];
-$("menus").hidden=$("nav-menus").hidden=!C.menus.length;
-$("menus-list").innerHTML=C.menus.map(m=>'<article class="menu">'+(m.quand?'<span class="quand">'+esc(m.quand)+'</span>':'')+'<div class="menu-top"><h3>'+esc(m.nom)+'</h3><span class="price">'+euro(m.prix)+'</span></div>'+
-  (m.contenu.length?'<ul>'+m.contenu.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'')+'</article>').join("");
-renderCarte();
-const today=(new Date().getDay()+6)%7;
-$("hours").innerHTML=C.horaires.map((h,i)=>'<tr'+(i===today?' class="today"':'')+'><td>'+esc(h[0])+(i===today?' (aujourd\'hui)':'')+'</td><td>'+esc(h[1])+'</td></tr>').join("");
-$("adresse").textContent=C.adresse; $("acces").textContent=C.acces;
-const maps="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(C.nom+" "+C.adresse);
-const links=[['Itinéraire Google Maps',maps],['Appeler : '+C.telephone,'tel:'+C.telephone.replace(/\s/g,"")]];
-Object.entries(C.reseaux).forEach(([k,v])=>{ if(v) links.push([k.charAt(0).toUpperCase()+k.slice(1),v]); });
-$("links").innerHTML=links.map(l=>'<a href="'+esc(l[1])+'">'+esc(l[0])+'</a>').join("");
-$("resa-sub").textContent=C.reservation.texte; $("resa-tel").textContent="Pour un groupe ou une question : "+C.telephone;
-$("f-left").textContent=C.nom+" · "+C.adresse;
-}
-let tab=Object.keys(C.carte)[0];
-function renderCarte(){
-  if(!tab){ $("tabs").innerHTML=""; $("dishes").innerHTML=""; return; }
-  $("tabs").innerHTML=Object.keys(C.carte).filter(k=>!C.rubriquesMasquees.some(m=>m.toLowerCase()===k.toLowerCase())).map(k=>'<button class="tab" type="button" role="tab" aria-selected="'+(k===tab)+'" data-tab="'+esc(k)+'">'+esc(k)+'</button>').join("");
-  $("dishes").innerHTML=C.carte[tab].map(d=>'<article class="dish"><div class="ph">'+(d.photo?'<img src="'+esc(d.photo)+'" alt="'+esc(d.nom)+'" loading="lazy" onerror="this.remove()">':'')+'</div>'+
-    '<div class="dish-b"><div class="dish-top"><h3>'+esc(d.nom)+'</h3><span class="price">'+(d.ancienPrix?'<s>'+euro(d.ancienPrix)+'</s>':'')+euro(d.prix)+'</span></div>'+
-    (d.desc?'<p class="desc">'+esc(d.desc)+'</p>':'')+
-    ((d.badges&&d.badges.length)?'<div class="badges">'+d.badges.map(b=>'<span class="badge'+(/promo|plus command/i.test(b)?' hot':'')+'">'+esc(b)+'</span>').join("")+'</div>':'')+'</div></article>').join("");
-}
-document.addEventListener("click",e=>{ const t=e.target.closest("[data-tab]"); if(t){ tab=t.dataset.tab; renderCarte(); } });
-renderAll();
-
-/* ---------- Lecture des données (via le serveur du site) ---------- */
-function parseCSV(t){
-  const rows=[]; let row=[], cur="", q=false;
-  for(let i=0;i<t.length;i++){ const c=t[i];
-    if(q){ if(c==='"'){ if(t[i+1]==='"'){ cur+='"'; i++; } else q=false; } else cur+=c; }
-    else if(c==='"') q=true; else if(c===','){ row.push(cur); cur=""; }
-    else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=""; } else if(c!=='\r') cur+=c; }
-  if(cur||row.length){ row.push(cur); rows.push(row); }
-  return rows;
-}
-async function lireOngletPublie(base,gid){
-  if(!gid) return null;
-  const r=await fetch(base+"?gid="+encodeURIComponent(gid)+"&single=true&output=csv&t="+Date.now());
-  if(!r.ok) throw new Error("onglet");
-  return parseCSV(await r.text()).slice(1);
-}
-async function lireDonnees(){
-  try{ const r=await fetch("/api/donnees"); if(r.ok && (r.headers.get("content-type")||"").includes("json")) return await r.json(); }catch(_){}
-  const T=C.sourceTest||{};
-  if(!T.lien) return null;
-  const base=T.lien.trim().replace(/\/pub(html)?(\?.*)?$/,"/pub");
-  const [carte,infos,menus]=await Promise.all([lireOngletPublie(base,T.gidCarte),lireOngletPublie(base,T.gidInfos),lireOngletPublie(base,T.gidMenus).catch(()=>null)]);
-  return {carte:carte||[],infos:infos||[],menus};
-}
 const num=v=>{ const x=parseFloat(String(v||"").replace(/[^\d,.-]/g,"").replace(",",".")); return isNaN(x)?null:x; };
-async function chargerSheet(){
-  try{
-    const data=await lireDonnees(); if(!data) return;
-    const {carte=[],infos=[],menus=null}=data;
-    if(menus && menus.length && menus[0].length>=3){
-      C.menus=menus.map(r=>r.map(x=>(x||"").trim())).filter(r=>r[0] && !/^non$/i.test(r[4]||""))
-        .map(r=>({nom:r[0],contenu:r[1]?r[1].split(/\s*[\n;]\s*/).filter(Boolean):[],prix:num(r[2])||0,quand:r[3]||""}));
-    }
-    const nc={};
-    carte.forEach(r=>{ const [cat,nom,desc,prix,ancien,photo,badges,aff]=r.map(x=>(x||"").trim());
-      if(!cat||!nom||/^non$/i.test(aff)) return;
-      (nc[cat]=nc[cat]||[]).push({nom,desc,prix:num(prix)||0,ancienPrix:num(ancien),photo,badges:badges?badges.split(/\s*[,;]\s*/):[]}); });
-    if(Object.keys(nc).length) C.carte=nc;
-    const I={}; infos.forEach(r=>{ if(r[0]) I[r[0].trim().toLowerCase()]=(r[1]||"").trim(); });
-    const g=k=>I[k];
-    if(g("nom")) C.nom=g("nom"); if(g("slogan")) C.slogan=g("slogan"); if(g("catégorie")) C.categorie=g("catégorie");
-    if(g("promo active")!==undefined) C.promo.active=/^oui$/i.test(g("promo active"));
-    if(g("texte de la promo")) C.promo.texte=g("texte de la promo");
-    if(g("téléphone")) C.telephone=g("téléphone"); if(g("whatsapp")) C.reservation.whatsapp=g("whatsapp").replace(/\D/g,"");
-    if(g("adresse")) C.adresse=g("adresse"); if(g("accès")!==undefined) C.acces=g("accès");
-    const jours=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-    if(jours.some(j=>g(j.toLowerCase()))) C.horaires=jours.map(j=>[j,g(j.toLowerCase())||"Fermé"]);
-    if(g("rubriques masquées")!==undefined) C.rubriquesMasquees=g("rubriques masquées").split(/\s*[,;]\s*/).filter(Boolean);
-    ["instagram","facebook","tiktok"].forEach(k=>{ if(g(k)!==undefined) C.reseaux[k]=g(k); });
-    renderAll();
-  }catch(e){ /* le tableau n'est pas joignable : on garde les valeurs de CONFIG */ }
+const euro=n=>n==null?"":(Number.isInteger(n)?n:n.toFixed(2).replace(".",","))+" €";
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const JOURS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+const ORDRE=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const oui=v=>/^oui$/i.test(String(v||"").trim());
+const non=v=>/^non$/i.test(String(v||"").trim());
+const heure=t=>{ const m=String(t||"").match(/(\d{1,2})[:hH](\d{2})/); return m?pad(m[1])+":"+m[2]:""; };
+const minutes=t=>{ const h=heure(t); return h?(+h.slice(0,2))*60+(+h.slice(3)):null; };
+const affH=t=>t.replace(":","h");
+function photoUrl(v){
+  v=String(v||"").trim(); if(!v) return "";
+  const m=v.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+  return m?"https://lh3.googleusercontent.com/d/"+m[1]+"=w1200":v;
 }
-chargerSheet();
-const d0=new Date(); $("f-date").min=d0.toISOString().slice(0,10);
 
-// Réservation
+/* ---------- Style ---------- */
+const st=document.documentElement.style, S=CONFIG.style;
+st.setProperty("--primary",S.principale); st.setProperty("--accent",S.accent); st.setProperty("--promo",S.promo); st.setProperty("--bg",S.fond);
+st.setProperty("--font-titre",'"'+S.policeTitre+'",Georgia,serif'); st.setProperty("--font-texte",'"'+S.policeTexte+'","Segoe UI",system-ui,sans-serif');
+$("fonts").href="https://fonts.googleapis.com/css2?family="+encodeURIComponent(S.policeTitre)+":wght@600;700&family="+encodeURIComponent(S.policeTexte)+":wght@400;600;700;800&family=Caveat:wght@600;700&display=swap";
+
+/* ---------- Mise en forme des données du tableau ---------- */
+let D=null;
+function normaliser(raw){
+  const I={}; (raw.infos||[]).forEach(r=>{ if(r[0]) I[String(r[0]).trim().toLowerCase()]=String(r[1]||"").trim(); });
+  const plage=t=>{ const m=String(t||"").match(/(\d{1,2}[:h]\d{2})\s*[-–à]+\s*(\d{1,2}[:h]\d{2})/); return m?[heure(m[1]),heure(m[2])]:null; };
+  const horaires={};
+  (raw.horaires||[]).forEach(r=>{ const j=String(r[0]||"").trim(); const k=ORDRE.find(x=>x.toLowerCase()===j.toLowerCase()); if(!k) return;
+    horaires[k]={ouvert:oui(r[1]),plages:[plage(r[2]),plage(r[3])].filter(Boolean),creneaux:String(r[4]||"").split(/[,;\s]+/).map(heure).filter(Boolean)}; });
+  const fermetures=(raw.fermetures||[]).map(r=>({date:String(r[0]).slice(0,10),motif:r[1]||""})).filter(f=>/^\d{4}-\d{2}-\d{2}$/.test(f.date));
+  const carte={};
+  (raw.carte||[]).forEach(r=>{ const [cat,nom,desc,prix,ancien,photo,etq,allerg,details,aff]=r.map(x=>String(x||"").trim());
+    if(!cat||!nom||non(aff)) return;
+    (carte[cat]=carte[cat]||[]).push({nom,desc,prix:num(prix),ancien:num(ancien),photo:photoUrl(photo),etiquettes:etq?etq.split(/\s*[,;]\s*/).filter(Boolean):[],allergenes:allerg?allerg.split(/\s*[,;]\s*/).filter(Boolean):[],details}); });
+  const ardoise=(raw.ardoise||[]).map(r=>r.map(x=>String(x||"").trim())).filter(r=>r[0]&&!non(r[3])).map(r=>({nom:r[0],desc:r[1],prix:num(r[2])}));
+  const menus=(raw.menus||[]).map(r=>r.map(x=>String(x||"").trim())).filter(r=>r[0]&&!non(r[4])).map(r=>({nom:r[0],contenu:r[1].split(/\s*;\s*/).filter(Boolean),prix:num(r[2]),quand:r[3]}));
+  const reseaux=(raw.reseaux||[]).map(r=>r.map(x=>String(x||"").trim())).filter(r=>r[1]&&!non(r[2])).map(r=>({type:r[0],lien:r[1]}));
+  return {I,horaires,fermetures,carte,ardoise,menus,reseaux};
+}
+
+/* ---------- Ouvert / fermé ---------- */
+function fermeture(dateIso){ return D.fermetures.find(f=>f.date===dateIso); }
+function jourInfo(d){ return D.horaires[JOURS[d.getDay()]]||{ouvert:false,plages:[],creneaux:[]}; }
+function statut(){
+  const now=new Date(), auj=iso(now), m=now.getHours()*60+now.getMinutes();
+  const f=fermeture(auj), j=jourInfo(now);
+  if(!f && j.ouvert){
+    for(const p of j.plages){ const a=minutes(p[0]), b=minutes(p[1]); if(m>=a&&m<b) return {open:true,txt:"Ouvert · jusqu'à "+affH(p[1])}; }
+    for(const p of j.plages){ if(minutes(p[0])>m) return {open:false,txt:"Fermé · ouvre à "+affH(p[0])}; }
+  }
+  for(let i=1;i<=14;i++){ const d=new Date(now); d.setDate(d.getDate()+i); const ji=jourInfo(d);
+    if(ji.ouvert && ji.plages.length && !fermeture(iso(d))) return {open:false,txt:"Fermé · ouvre "+(i===1?"demain":JOURS[d.getDay()].toLowerCase())+" à "+affH(ji.plages[0][0])}; }
+  return {open:false,txt:"Fermé"};
+}
+function renderStatut(){
+  const s=statut();
+  ["status-top","status-hero"].forEach(id=>{ const el=$(id); el.className="status "+(s.open?"open":"closed"); el.querySelector("span").textContent=s.txt; });
+  const f=fermeture(iso(new Date()));
+  $("closure").hidden=!f; if(f) $("closure").textContent="Fermé aujourd'hui"+(f.motif?" : "+f.motif:"")+". À très vite !";
+}
+
+/* ---------- Rendu ---------- */
+let tab=null;
+function render(){
+  const I=D.I;
+  document.title=(I["nom"]||"Restaurant")+(I["catégorie"]?" · "+I["catégorie"]:"");
+  document.querySelector('meta[name="description"]').content=(I["slogan"]||"");
+  $("logo").textContent=I["nom"]||""; $("h-tag").textContent=I["catégorie"]||""; $("h-titre").textContent=I["nom"]||""; $("h-texte").textContent=I["slogan"]||"";
+  $("promo").hidden=!(oui(I["promo active"])&&I["texte de la promo"]); $("promo").textContent=I["texte de la promo"]||"";
+  const hp=photoUrl(I["photo d'accueil"]); let im=$("hero").querySelector("img");
+  if(hp){ if(!im){ im=new Image(); im.alt=""; im.onerror=()=>im.remove(); $("hero").prepend(im); } if(im.getAttribute("src")!==hp) im.src=hp; } else if(im) im.remove();
+  renderStatut();
+  // menus
+  $("menus").hidden=!D.menus.length;
+  $("menus").innerHTML=D.menus.map(m=>'<article class="menu">'+(m.quand?'<span class="quand">'+esc(m.quand)+'</span>':'')+'<div class="menu-top"><h3>'+esc(m.nom)+'</h3><span class="price">'+euro(m.prix)+'</span></div>'+(m.contenu.length?'<ul>'+m.contenu.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>':'')+'</article>').join("");
+  // carte
+  const cats=Object.keys(D.carte); if(!cats.includes(tab)) tab=cats[0];
+  renderCarte();
+  // ardoise
+  $("ardoise").hidden=!D.ardoise.length;
+  $("ard-titre").textContent=I["titre de l'ardoise"]||"L'ardoise du jour";
+  $("ard-date").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+  $("ard-list").innerHTML=D.ardoise.map(a=>'<div class="ard-item"><div><div class="ard-n">'+esc(a.nom)+'</div>'+(a.desc?'<div class="ard-d">'+esc(a.desc)+'</div>':'')+'</div><div class="ard-p">'+euro(a.prix)+'</div></div>').join("");
+  // horaires
+  const auj=JOURS[new Date().getDay()];
+  $("hours").innerHTML=ORDRE.map(j=>{ const h=D.horaires[j]; const txt=(h&&h.ouvert&&h.plages.length)?h.plages.map(p=>affH(p[0])+" – "+affH(p[1])).join(" · "):'<span class="ferme">Fermé</span>';
+    return '<tr'+(j===auj?' class="today"':'')+'><td>'+j+(j===auj?" (aujourd'hui)":"")+'</td><td>'+txt+'</td></tr>'; }).join("");
+  const proch=D.fermetures.filter(f=>f.date>=iso(new Date())).slice(0,3);
+  $("exc").textContent=proch.length?"Fermetures exceptionnelles : "+proch.map(f=>new Date(f.date+"T12:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long"})+(f.motif?" ("+f.motif+")":"")).join(", "):"";
+  $("adresse").textContent=I["adresse"]||""; $("acces").textContent=I["accès"]||"";
+  const links=[];
+  if(I["adresse"]) links.push(["Itinéraire Google Maps","https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((I["nom"]||"")+" "+I["adresse"])]);
+  if(I["téléphone"]) links.push(["Appeler : "+I["téléphone"],"tel:"+I["téléphone"].replace(/\s/g,"")]);
+  if(I["e-mail"]) links.push(["Écrire : "+I["e-mail"],"mailto:"+I["e-mail"]]);
+  $("links").innerHTML=links.map(l=>'<a href="'+esc(l[1])+'">'+esc(l[0])+'</a>').join("");
+  $("resa-tel").textContent=I["téléphone"]?"Pour un groupe ou une question : "+I["téléphone"]:"";
+  $("f-left").textContent=(I["nom"]||"")+(I["adresse"]?" · "+I["adresse"]:"");
+  $("credits").textContent=I["crédits photos"]||"";
+  // réseaux
+  const soc=[["Instagram",I["instagram"]],["TikTok",I["tiktok"]],["Facebook",I["facebook"]]].filter(s=>s[1]);
+  $("social").innerHTML=soc.map(s=>'<a href="'+esc(s[1])+'" target="_blank" rel="noopener">'+esc(s[0])+' ↗</a>').join("");
+  $("posts").innerHTML=D.reseaux.map(embed).join("");
+  const showRes=soc.length||D.reseaux.length; $("reseaux").hidden=!showRes; $("nav-res").hidden=!showRes;
+  // réservation
+  const actif=!non(I["réservations actives"]);
+  $("form").hidden=!actif;
+  $("resa-sub").textContent=actif?"Choisissez une date, puis un créneau. Nous vous confirmons rapidement.":"La réservation en ligne est fermée pour le moment. Appelez-nous, nous serons ravis de vous accueillir.";
+  const max=parseInt(I["personnes max par réservation"]||"10",10)||10, cur=$("f-pers").value||"2";
+  $("f-pers").innerHTML=Array.from({length:max},(_,i)=>'<option>'+(i+1)+'</option>').join(""); $("f-pers").value=Math.min(+cur,max);
+  const n=new Date(); $("f-date").min=iso(n); const mx=new Date(n); mx.setDate(mx.getDate()+(parseInt(I["jours de réservation à l'avance"]||"60",10)||60)); $("f-date").max=iso(mx);
+  renderSlots();
+}
+function renderCarte(){
+  const cats=Object.keys(D.carte);
+  $("tabs").innerHTML=cats.map(k=>'<button class="tab" type="button" role="tab" aria-selected="'+(k===tab)+'" data-tab="'+esc(k)+'">'+esc(k)+'</button>').join("");
+  const list=D.carte[tab]||[];
+  $("dishes").innerHTML=list.length?list.map((d,i)=>'<button class="dish" type="button" data-dish="'+i+'"><div class="ph">'+(d.photo?'<img src="'+esc(d.photo)+'" alt="" loading="lazy" onerror="this.remove()">':'')+'</div>'+
+    '<div class="dish-b"><div class="dish-top"><h3>'+esc(d.nom)+'</h3><span class="price">'+(d.ancien?'<s>'+euro(d.ancien)+'</s>':'')+euro(d.prix)+'</span></div>'+
+    (d.desc?'<p class="desc">'+esc(d.desc)+'</p>':'')+(d.etiquettes.length?'<div class="badges">'+d.etiquettes.map(b=>'<span class="badge'+(/promo|command/i.test(b)?' hot':'')+'">'+esc(b)+'</span>').join("")+'</div>':'')+
+    '<span class="more">Détail et allergènes →</span></div></button>').join(""):'<p class="sub">La carte arrive bientôt.</p>';
+}
+function openDish(i){
+  const d=(D.carte[tab]||[])[i]; if(!d) return;
+  $("dlg-c").innerHTML=(d.photo?'<div class="dlg-ph"><img src="'+esc(d.photo)+'" alt="'+esc(d.nom)+'" onerror="this.remove()"></div>':'')+
+    '<div class="dlg-b"><div class="dlg-top"><h3 id="dlg-nom">'+esc(d.nom)+'</h3><span class="price">'+(d.ancien?'<s>'+euro(d.ancien)+'</s> ':'')+euro(d.prix)+'</span></div>'+
+    (d.desc?'<p class="sub">'+esc(d.desc)+'</p>':'')+(d.details?'<p>'+esc(d.details)+'</p>':'')+
+    (d.etiquettes.length?'<div class="badges">'+d.etiquettes.map(b=>'<span class="badge">'+esc(b)+'</span>').join("")+'</div>':'')+
+    '<div><strong>Allergènes</strong><div class="allerg" style="margin-top:6px">'+(d.allergenes.length?d.allergenes.map(a=>'<span>'+esc(a)+'</span>').join(""):'<span style="background:#E3F2E8;color:#1E6B40">Aucun allergène majeur signalé</span>')+'</div>'+
+    '<p class="small" style="margin-top:8px">En cas d\'allergie, prévenez-nous au moment de commander.</p></div>'+
+    '<a class="btn" href="#reserver" id="dlg-resa" style="align-self:flex-start">Réserver une table</a></div>';
+  $("dlg").showModal();
+}
+function embed(p){
+  const l=p.lien; let m;
+  if((m=l.match(/tiktok\.com\/.*\/video\/(\d+)/))) return '<div class="post"><iframe src="https://www.tiktok.com/embed/v2/'+m[1]+'" title="Vidéo TikTok" loading="lazy" allowfullscreen></iframe></div>';
+  if((m=l.match(/instagram\.com\/(?:[\w.]+\/)?(?:p|reel|tv)\/([\w-]+)/))) return '<div class="post"><iframe src="https://www.instagram.com/p/'+m[1]+'/embed" title="Publication Instagram" loading="lazy" style="height:640px"></iframe></div>';
+  if((m=l.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/))) return '<div class="post"><iframe src="https://www.youtube.com/embed/'+m[1]+'" title="Vidéo YouTube" loading="lazy" style="height:320px" allowfullscreen></iframe></div>';
+  return '<div class="post"><a href="'+esc(l)+'" target="_blank" rel="noopener">Voir la publication '+esc(p.type||"")+' ↗</a></div>';
+}
+
+/* ---------- Réservation ---------- */
+let slotChoisi="";
+function creneauxPour(dateIso){
+  const out={liste:[],raison:""};
+  if(!dateIso) { out.raison="Choisissez d'abord une date."; return out; }
+  const f=fermeture(dateIso); const d=new Date(dateIso+"T12:00"); const j=jourInfo(d);
+  if(f){ out.raison="Fermé ce jour-là"+(f.motif?" ("+f.motif+")":"")+"."; return out; }
+  if(!j.ouvert||!j.creneaux.length){ out.raison="Fermé le "+JOURS[d.getDay()].toLowerCase()+"."; return out; }
+  let l=j.creneaux;
+  if(dateIso===iso(new Date())){ const lim=new Date(Date.now()+(parseFloat(D.I["délai minimum (heures)"]||"0")||0)*3600000); const lm=lim.getHours()*60+lim.getMinutes(); l=l.filter(h=>minutes(h)>=lm); if(iso(lim)!==dateIso) l=[]; }
+  if(!l.length){ out.raison="Plus de créneau disponible ce jour-là."; return out; }
+  out.liste=l; return out;
+}
+function renderSlots(){
+  const c=creneauxPour($("f-date").value);
+  if(!c.liste.includes(slotChoisi)) slotChoisi="";
+  $("slots").innerHTML=c.liste.length?c.liste.map(h=>'<button type="button" class="slot" data-slot="'+h+'" aria-pressed="'+(h===slotChoisi)+'">'+affH(h)+'</button>').join(""):'<span class="slot-msg'+($("f-date").value?' ko':'')+'">'+esc(c.raison)+'</span>';
+  $("f-btn").disabled=!c.liste.length;
+}
+$("f-date").addEventListener("change",()=>{ $("f-out").textContent=""; $("f-out").className="msg"; renderSlots(); });
 $("form").addEventListener("submit",async e=>{
   e.preventDefault();
-  const f=e.target, out=$("f-out");
-  if(!f.checkValidity()){ out.textContent="Merci de remplir le nom, le téléphone, la date, l'heure et le nombre de personnes."; return; }
-  const v=id=>$(id).value.trim();
-  const dateTxt=new Date(v("f-date")+"T12:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-  const texte="Bonjour, je souhaite réserver chez "+C.nom+" :\n- "+dateTxt+" à "+v("f-heure")+"\n- "+v("f-pers")+" personne(s)\n- Occasion : "+v("f-occ")+"\n- Nom : "+v("f-nom")+"\n- Téléphone : "+v("f-tel")+(v("f-msg")?"\n- Message : "+v("f-msg"):"");
-  if(C.reservation.mode==="formulaire" && C.reservation.adresseFormulaire){
-    $("f-btn").disabled=true;
-    try{
-      const r=await fetch(C.reservation.adresseFormulaire,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify({nom:v("f-nom"),telephone:v("f-tel"),date:v("f-date"),heure:v("f-heure"),personnes:v("f-pers"),occasion:v("f-occ"),message:v("f-msg")})});
-      if(!r.ok) throw 0;
-      out.textContent="Merci ! Votre demande est envoyée. Le restaurant vous confirme rapidement."; f.reset();
-    }catch(_){ out.textContent="L'envoi n'a pas marché. Appelez-nous au "+C.telephone+"."; }
-    $("f-btn").disabled=false;
-  }else{
-    window.location.href="https://wa.me/"+C.reservation.whatsapp+"?text="+encodeURIComponent(texte);
-    out.textContent="WhatsApp s'ouvre avec votre demande : il ne reste qu'à l'envoyer.";
-  }
+  const out=$("f-out"), v=id=>$(id).value.trim();
+  const ko=t=>{ out.className="msg ko"; out.textContent=t; };
+  if(!v("f-date")) return ko("Choisissez une date.");
+  if(!slotChoisi) return ko("Choisissez un créneau.");
+  if(!v("f-nom")||!v("f-tel")) return ko("Indiquez votre nom et votre téléphone.");
+  const data={date:v("f-date"),heure:slotChoisi,personnes:v("f-pers"),nom:v("f-nom"),telephone:v("f-tel"),email:v("f-email"),occasion:v("f-occ"),message:v("f-msg"),site_web:v("f-site")};
+  if(!CONFIG.api){ out.className="msg ok"; out.textContent="Démonstration : la demande n'a pas été envoyée. Reliez le site à votre tableau pour recevoir les réservations."; return; }
+  $("f-btn").disabled=true; out.className="msg"; out.textContent="Envoi en cours…";
+  try{
+    const r=await fetch(CONFIG.api,{method:"POST",body:JSON.stringify(data)});
+    const res=await r.json();
+    if(res.ok){ out.className="msg ok"; out.textContent=res.message||"Merci ! Votre demande est bien reçue."; $("form").reset(); slotChoisi=""; renderSlots(); }
+    else ko(res.erreur||"La réservation n'a pas pu être enregistrée.");
+  }catch(_){ ko("L'envoi n'a pas marché. Appelez-nous"+(D.I["téléphone"]?" au "+D.I["téléphone"]:"")+"."); }
+  $("f-btn").disabled=!creneauxPour(v("f-date")).liste.length;
 });
+
+/* ---------- Clics ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-tab]"); if(t){ tab=t.dataset.tab; renderCarte(); return; }
+  const d=e.target.closest("[data-dish]"); if(d){ openDish(+d.dataset.dish); return; }
+  const s=e.target.closest("[data-slot]"); if(s){ slotChoisi=s.dataset.slot; renderSlots(); $("f-out").textContent=""; return; }
+  if(e.target.id==="dlg-x"||e.target.id==="dlg-resa"||e.target===$("dlg")) $("dlg").close();
+});
+
+/* ---------- Chargement ---------- */
+async function charger(){
+  if(!CONFIG.api){ D=normaliser(DEMO); $("demo").hidden=false; render(); return; }
+  try{
+    const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),10000);
+    const r=await fetch(CONFIG.api,{signal:ctrl.signal}); clearTimeout(t);
+    D=normaliser(await r.json()); render();
+  }catch(_){
+    D=D||normaliser({infos:[],carte:[]}); render();
+    $("dishes").innerHTML='<p class="sub">La carte ne peut pas s\'afficher pour le moment. Rechargez la page dans un instant.</p>';
+  }
+}
+charger();
+setInterval(()=>{ if(D) renderStatut(); },60000);
 </script>
 </body>
 </html>
